@@ -1,20 +1,34 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { taskAPI } from '../services/api'
 import './TaskForm.css'
 
+const buildInitialState = (task) =>
+  task
+    ? {
+        title: task.title || '',
+        description: task.description || '',
+        status: task.status || 'pending',
+        priority: task.priority || 'medium',
+        assignedTo: task.assignedTo?._id || task.assignedTo || '',
+        dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
+      }
+    : {
+        title: '',
+        description: '',
+        status: 'pending',
+        priority: 'medium',
+        assignedTo: '',
+        dueDate: '',
+      }
+
 export default function TaskForm({ task, employees, onSave, onCancel }) {
-  const [formData, setFormData] = useState(
-    task || {
-      title: '',
-      description: '',
-      status: 'pending',
-      priority: 'medium',
-      assignedTo: '',
-      dueDate: '',
-    }
-  )
+  const [formData, setFormData] = useState(buildInitialState(task))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  useEffect(() => {
+    setFormData(buildInitialState(task))
+  }, [task])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -107,19 +121,14 @@ export default function TaskForm({ task, employees, onSave, onCancel }) {
           <select name="status" value={formData.status} onChange={handleChange}>
             <option value="pending">Pending</option>
             <option value="in-progress">In Progress</option>
+            <option value="awaiting-approval">Awaiting Approval</option>
             <option value="completed">Completed</option>
           </select>
         </div>
 
         <div className="form-group">
           <label>Due Date *</label>
-          <input
-            type="date"
-            name="dueDate"
-            value={formData.dueDate.split('T')[0]}
-            onChange={handleChange}
-            required
-          />
+        <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} required />
         </div>
       </div>
 

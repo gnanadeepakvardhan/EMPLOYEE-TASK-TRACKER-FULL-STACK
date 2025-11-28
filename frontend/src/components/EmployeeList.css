@@ -4,6 +4,18 @@
   padding: 0 2rem;
 }
 
+.restricted-card {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #f97316;
+  color: #9a3412;
+  box-shadow: 0 10px 25px rgba(249, 115, 22, 0.15);
+}
+
 .header {
   display: flex;
   justify-content: space-between;

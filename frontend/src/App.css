@@ -8,6 +8,20 @@
 .main-content {
   flex: 1;
   padding: 2rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.access-message {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #c2410c;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin: 2rem;
+  font-weight: 500;
+  text-align: center;
 }
 
 .app-footer {

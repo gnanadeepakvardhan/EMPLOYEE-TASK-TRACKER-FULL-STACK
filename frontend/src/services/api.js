@@ -10,6 +10,17 @@ const apiClient = axios.create({
   },
 })
 
+// Attach JWT token from localStorage (if present)
+apiClient.interceptors.request.use((config) => {
+  try {
+    const token = localStorage.getItem('authToken')
+    if (token) config.headers.Authorization = `Bearer ${token}`
+  } catch (e) {
+    // ignore
+  }
+  return config
+})
+
 // Add response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => response,
@@ -87,6 +98,21 @@ export const taskAPI = {
     const response = await apiClient.get('/tasks', {
       params: { status },
     })
+    return response.data.data
+  },
+
+  requestCompletion: async (id, payload) => {
+    const response = await apiClient.post(`/tasks/${id}/request-completion`, payload)
+    return response.data.data
+  },
+
+  approveCompletion: async (id, responseNote) => {
+    const response = await apiClient.post(`/tasks/${id}/approve-completion`, { responseNote })
+    return response.data.data
+  },
+
+  rejectCompletion: async (id, responseNote) => {
+    const response = await apiClient.post(`/tasks/${id}/reject-completion`, { responseNote })
     return response.data.data
   },
 }

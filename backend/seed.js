@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Employee from './models/Employee.js';
 import Task from './models/Task.js';
+import User from './models/User.js';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 
@@ -46,10 +47,28 @@ const seedDatabase = async () => {
     // Clear existing data
     await Employee.deleteMany({});
     await Task.deleteMany({});
+    await User.deleteMany({});
 
     // Insert employees
     const createdEmployees = await Employee.insertMany(employees);
     console.log(`✓ Created ${createdEmployees.length} employees`);
+
+    // Create an admin user
+    const adminEmail = process.env.SEED_ADMIN_EMAIL || 'deepakpgdv@gmail.com';
+    const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'Admin@123';
+    const admin = await User.create({ email: adminEmail, password: adminPassword, role: 'admin' });
+    console.log(`✓ Created admin user: ${admin.email}`);
+
+    // Create a sample regular user linked to the first employee
+    const regularEmail = process.env.SEED_USER_EMAIL || 'john.smith@company.com';
+    const regularPassword = process.env.SEED_USER_PASSWORD || 'User@123';
+    const regularUser = await User.create({
+      email: regularEmail,
+      password: regularPassword,
+      role: 'user',
+      employee: createdEmployees[0]._id,
+    });
+    console.log(`✓ Created regular user for ${regularUser.email}`);
 
     // Create tasks
     const tasks = [

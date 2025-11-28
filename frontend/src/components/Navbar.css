@@ -13,12 +13,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1.5rem;
 }
 
 .navbar-brand h1 {
   font-size: 24px;
   margin: 0;
   font-weight: 600;
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .navbar-menu {
@@ -48,4 +55,66 @@
 .nav-link.active {
   background: rgba(255, 255, 255, 0.3);
   border-bottom: 2px solid white;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.user-email {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.logout-btn {
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+}
+
+@media (max-width: 900px) {
+  .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-content {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .navbar-menu {
+    flex-wrap: wrap;
+  }
+
+  .navbar-user {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

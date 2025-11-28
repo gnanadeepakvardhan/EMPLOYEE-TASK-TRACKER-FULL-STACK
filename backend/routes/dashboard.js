@@ -1,11 +1,12 @@
 import express from 'express';
 import Task from '../models/Task.js';
 import Employee from '../models/Employee.js';
+import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
 // GET dashboard summary
-router.get('/', async (req, res) => {
+router.get('/', protect, authorize('admin'), async (req, res) => {
   try {
     const totalEmployees = await Employee.countDocuments();
     const totalTasks = await Task.countDocuments();
@@ -13,6 +14,9 @@ router.get('/', async (req, res) => {
     const pendingTasks = await Task.countDocuments({ status: 'pending' });
     const inProgressTasks = await Task.countDocuments({
       status: 'in-progress',
+    });
+    const awaitingApprovalTasks = await Task.countDocuments({
+      status: 'awaiting-approval',
     });
 
     const completionRate =
@@ -81,6 +85,7 @@ router.get('/', async (req, res) => {
           completedTasks,
           pendingTasks,
           inProgressTasks,
+          awaitingApprovalTasks,
           completionRate,
         },
         tasksByPriority: tasksByPriority.reduce((acc, item) => {

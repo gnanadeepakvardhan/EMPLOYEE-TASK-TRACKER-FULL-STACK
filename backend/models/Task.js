@@ -14,7 +14,7 @@ const taskSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'in-progress', 'completed'],
+      enum: ['pending', 'in-progress', 'awaiting-approval', 'completed'],
       default: 'pending',
     },
     priority: {
@@ -34,6 +34,37 @@ const taskSchema = new mongoose.Schema(
     completedAt: {
       type: Date,
       default: null,
+    },
+    completionRequest: {
+      status: {
+        type: String,
+        enum: ['none', 'pending', 'approved', 'rejected'],
+        default: 'none',
+      },
+      note: {
+        type: String,
+        trim: true,
+      },
+      attachments: [
+        {
+          name: { type: String, trim: true },
+          url: { type: String, trim: true },
+        },
+      ],
+      requestedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      requestedAt: Date,
+      responseNote: {
+        type: String,
+        trim: true,
+      },
+      respondedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      respondedAt: Date,
     },
   },
   { timestamps: true }

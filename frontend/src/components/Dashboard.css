@@ -112,6 +112,10 @@
   background: #ffc107;
 }
 
+.status-fill.awaiting {
+  background: #3b82f6;
+}
+
 .status-fill.completed {
   background: #28a745;
 }

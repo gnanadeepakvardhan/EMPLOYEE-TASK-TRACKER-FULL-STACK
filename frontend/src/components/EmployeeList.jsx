@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react'
 import { employeeAPI } from '../services/api'
 import EmployeeForm from './EmployeeForm'
 import './EmployeeList.css'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function EmployeeList() {
+  const { isAdmin } = useAuth()
   const [employees, setEmployees] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -11,8 +13,19 @@ export default function EmployeeList() {
   const [editingEmployee, setEditingEmployee] = useState(null)
 
   useEffect(() => {
-    fetchEmployees()
-  }, [])
+    if (isAdmin) {
+      fetchEmployees()
+    }
+  }, [isAdmin])
+
+  if (!isAdmin) {
+    return (
+      <div className="restricted-card">
+        <h3>Admin Access Required</h3>
+        <p>Only administrators can manage employees.</p>
+      </div>
+    )
+  }
 
   const fetchEmployees = async () => {
     try {

@@ -10,6 +10,7 @@ import {
 import employeesRouter from './routes/employees.js';
 import tasksRouter from './routes/tasks.js';
 import dashboardRouter from './routes/dashboard.js';
+import authRouter from './routes/auth.js';
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/employees', employeesRouter);
 app.use('/api/tasks', tasksRouter);
 app.use('/api/dashboard', dashboardRouter);
+app.use('/api/auth', authRouter);
 
 // Error handling
 app.use(notFoundHandler);

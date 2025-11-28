@@ -1,6 +1,7 @@
 import express from 'express';
 import Employee from '../models/Employee.js';
 import Task from '../models/Task.js';
+import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -53,7 +54,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST create new employee
-router.post('/', async (req, res) => {
+router.post('/', protect, authorize('admin'), async (req, res) => {
   try {
     const { name, email, department, position } = req.body;
 
@@ -92,7 +93,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update employee
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const { name, email, department, position, status } = req.body;
 
@@ -137,7 +138,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE employee
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const employee = await Employee.findByIdAndDelete(req.params.id);
 

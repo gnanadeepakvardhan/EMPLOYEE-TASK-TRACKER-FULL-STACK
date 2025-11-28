@@ -94,6 +94,15 @@ export default function Dashboard() {
               <span className="status-count">{summary.inProgressTasks}</span>
             </div>
             <div className="status-item">
+              <span className="status-label">Awaiting Approval</span>
+              <div className="status-bar">
+                <div className="status-fill awaiting" style={{
+                  width: `${summary.totalTasks > 0 ? (summary.awaitingApprovalTasks / summary.totalTasks) * 100 : 0}%`
+                }}></div>
+              </div>
+              <span className="status-count">{summary.awaitingApprovalTasks}</span>
+            </div>
+            <div className="status-item">
               <span className="status-label">Completed</span>
               <div className="status-bar">
                 <div className="status-fill completed" style={{

@@ -17,6 +17,12 @@
   color: #333;
 }
 
+.helper-text {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
 .filters {
   display: flex;
   gap: 2rem;
@@ -130,6 +136,122 @@
   padding: 8px 16px;
 }
 
+.completion-section {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.request-banner {
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.request-banner.awaiting {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.request-banner.rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.request-details p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.attachments-list ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.attachments-list a {
+  color: #2563eb;
+}
+
+.response-note {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.request-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.request-form textarea {
+  resize: vertical;
+  border-radius: 8px;
+  border: 1px solid #cbd5f5;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.attachment-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.attachment-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.attachment-row input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5f5;
+  border-radius: 6px;
+}
+
+.btn-link {
+  border: none;
+  background: none;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+}
+
+.request-form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-success {
+  background: #059669;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-success:disabled,
+.btn-danger:disabled,
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 .empty-state {
   text-align: center;
   padding: 2rem;

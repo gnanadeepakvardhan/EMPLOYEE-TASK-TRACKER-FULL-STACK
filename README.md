@@ -7,7 +7,9 @@ A complete fullstack web application for managing employees and their tasks with
 - **Dashboard**: View summary statistics including total employees, tasks, completion rates, and employee performance
 - **Employee Management**: Create, read, update, and delete employees with department and position information
 - **Task Management**: Create, update, and manage tasks with priority levels, due dates, and assignment tracking
-- **Task Filtering**: Filter tasks by status (pending, in-progress, completed) and assigned employee
+- **Task Filtering**: Filter tasks by status (pending, in-progress, awaiting-approval, completed) and assigned employee
+- **Role-Based Access Control**: Admins manage everything; employees only see their tasks and can’t edit other data
+- **Completion Requests**: Employees can request task approval with notes/screenshots, admins approve/reject with feedback
 - **Performance Analytics**: Track employee productivity and task completion rates
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 
@@ -56,6 +58,12 @@ A complete fullstack web application for managing employees and their tasks with
    MONGODB_URI=mongodb://localhost:27017/employee-task-tracker
    NODE_ENV=development
    FRONTEND_URL=http://localhost:5173
+JWT_SECRET=dev_jwt_secret
+JWT_EXPIRES_IN=1d
+SEED_ADMIN_EMAIL=admin@example.com
+SEED_ADMIN_PASSWORD=Admin@123
+SEED_USER_EMAIL=user@example.com
+SEED_USER_PASSWORD=User@123
    ```
 
 4. **Seed the database** (optional - creates sample data)
@@ -156,7 +164,7 @@ GET /tasks?assignedTo=EMPLOYEE_ID
 GET /tasks?priority=high
 ```
 **Query Parameters**:
-- `status`: pending, in-progress, completed
+- `status`: pending, in-progress, awaiting-approval, completed
 - `assignedTo`: Employee ID
 - `priority`: low, medium, high
 
@@ -180,7 +188,7 @@ Content-Type: application/json
 ```
 **Required fields**: title, assignedTo, dueDate
 **Priority values**: low, medium, high (default: medium)
-**Status values**: pending, in-progress, completed (default: pending)
+**Status values**: pending, in-progress, awaiting-approval, completed (default: pending)
 
 #### PUT update task
 ```
@@ -198,6 +206,39 @@ Content-Type: application/json
 DELETE /tasks/:id
 ```
 
+#### POST request completion (employee)
+```
+POST /tasks/:id/request-completion
+Content-Type: application/json
+
+{
+  "note": "Feature deployed to staging, please verify",
+  "attachments": [
+    { "name": "Demo video", "url": "https://drive.google.com/..." }
+  ]
+}
+```
+
+#### POST approve completion (admin)
+```
+POST /tasks/:id/approve-completion
+Content-Type: application/json
+
+{
+  "responseNote": "Looks great, marking done"
+}
+```
+
+#### POST reject completion (admin)
+```
+POST /tasks/:id/reject-completion
+Content-Type: application/json
+
+{
+  "responseNote": "API test still failing, please fix"
+}
+```
+
 ### Dashboard Endpoint
 
 #### GET dashboard summary
@@ -213,6 +254,7 @@ GET /dashboard
     "completedTasks": 3,
     "pendingTasks": 4,
     "inProgressTasks": 3,
+    "awaitingApprovalTasks": 1,
     "completionRate": 30
   },
   "tasksByPriority": {
@@ -254,11 +296,21 @@ GET /dashboard
   _id: ObjectId,
   title: String (required, min 3 chars),
   description: String,
-  status: String (enum: ['pending', 'in-progress', 'completed'], default: 'pending'),
+  status: String (enum: ['pending', 'in-progress', 'awaiting-approval', 'completed'], default: 'pending'),
   priority: String (enum: ['low', 'medium', 'high'], default: 'medium'),
   assignedTo: ObjectId (ref: Employee, required),
   dueDate: Date (required),
   completedAt: Date,
+  completionRequest: {
+    status: String (enum: ['none', 'pending', 'approved', 'rejected']),
+    note: String,
+    attachments: [{ name: String, url: String }],
+    requestedBy: ObjectId (ref: User),
+    requestedAt: Date,
+    responseNote: String,
+    respondedBy: ObjectId (ref: User),
+    respondedAt: Date
+  },
   createdAt: Date,
   updatedAt: Date
 }
@@ -341,31 +393,26 @@ npm run preview  # Preview production build
 - Tasks require an assigned employee
 
 ### Limitations
-- No user authentication/authorization implemented (see bonus below)
-- No real-time updates (polling every 30 seconds on dashboard)
+- No real-time updates (dashboard polls every 30 seconds)
 - No task attachment/file upload support
 - No task comments or activity logs
 - No email notifications
 - Single-page application (no multiple instances)
 
-## 🚀 Bonus: Authentication & Authorization
+## 🔐 Authentication & Roles
 
-To add authentication:
+- Login/Register endpoints issue JWT tokens that the frontend stores and sends with every request.
+- Seed script creates one admin (full access) and one employee account bound to an existing employee record.
+- Admin abilities:
+  - CRUD employees and tasks
+  - View dashboard analytics
+  - Approve or reject completion requests with feedback
+- Employee abilities:
+  - View only their assigned tasks
+  - Submit completion requests with notes + attachment links
+  - See admin responses/rejections inline
 
-1. **Install JWT**
-   ```bash
-   npm install jsonwebtoken bcryptjs
-   ```
-
-2. **Create User model** with email and password hash
-
-3. **Implement Login/Register endpoints** with JWT tokens
-
-4. **Add Role-based access control**:
-   - Admin: Can create, update, delete all tasks and employees
-   - Employee: Can only view their assigned tasks
-
-5. **Protect routes** with authentication middleware
+Run `npm run seed` after configuring the `.env` file to recreate the default admin/employee accounts, then log in through the UI.
 
 ## 📸 Screenshots
 
