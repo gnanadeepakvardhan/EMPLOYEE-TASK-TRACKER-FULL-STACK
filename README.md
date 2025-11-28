@@ -2,6 +2,9 @@
 
 A complete fullstack web application for managing employees and their tasks within a company. Built with React (Frontend), Node.js + Express (Backend), and MongoDB (Database).
 
+## Screenshots
+drive link: https://drive.google.com/drive/folders/1cB_Ty7mY3YlxbYx1JVhSkEr4GGUioG9h?usp=drive_link
+
 ## 🎯 Features
 
 - **Dashboard**: View summary statistics including total employees, tasks, completion rates, and employee performance
