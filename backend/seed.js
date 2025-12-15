@@ -1,14 +1,42 @@
 import mongoose from 'mongoose';
-import Employee from './models/Employee.js';
-import Task from './models/Task.js';
-import User from './models/User.js';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 
+import Employee from './models/Employee.js';
+import Task from './models/Task.js';
+import User from './models/User.js';
+
 dotenv.config();
 
-await connectDB();
+/**
+ * 🚫 Prevent accidental seeding in production
+ */
+if (process.env.NODE_ENV === 'production') {
+  console.log('❌ Seeding is disabled in production');
+  process.exit(0);
+}
 
+/**
+ * 📌 Validate required env variables
+ */
+const requiredEnvVars = [
+  'MONGODB_URI',
+  'SEED_ADMIN_EMAIL',
+  'SEED_ADMIN_PASSWORD',
+  'SEED_USER_EMAIL',
+  'SEED_USER_PASSWORD',
+];
+
+for (const key of requiredEnvVars) {
+  if (!process.env[key]) {
+    console.error(`❌ Missing environment variable: ${key}`);
+    process.exit(1);
+  }
+}
+
+/**
+ * 🧑‍💼 Employees seed data
+ */
 const employees = [
   {
     name: 'John Smith',
@@ -44,124 +72,69 @@ const employees = [
 
 const seedDatabase = async () => {
   try {
-    // Clear existing data
+    await connectDB();
+
+    console.log('🧹 Clearing existing data...');
     await Employee.deleteMany({});
     await Task.deleteMany({});
     await User.deleteMany({});
 
-    // Insert employees
+    console.log('👥 Inserting employees...');
     const createdEmployees = await Employee.insertMany(employees);
-    console.log(`✓ Created ${createdEmployees.length} employees`);
+    console.log(`✓ ${createdEmployees.length} employees created`);
 
-    // Create an admin user
-    const adminEmail = process.env.SEED_ADMIN_EMAIL || 'deepakpgdv@gmail.com';
-    const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'Admin@123';
-    const admin = await User.create({ email: adminEmail, password: adminPassword, role: 'admin' });
-    console.log(`✓ Created admin user: ${admin.email}`);
+    console.log('👑 Creating admin user...');
+    const adminUser = await User.create({
+      email: process.env.SEED_ADMIN_EMAIL,
+      password: process.env.SEED_ADMIN_PASSWORD,
+      role: 'admin',
+    });
+    console.log(`✓ Admin created: ${adminUser.email}`);
 
-    // Create a sample regular user linked to the first employee
-    const regularEmail = process.env.SEED_USER_EMAIL || 'john.smith@company.com';
-    const regularPassword = process.env.SEED_USER_PASSWORD || 'User@123';
+    console.log('👤 Creating regular user...');
     const regularUser = await User.create({
-      email: regularEmail,
-      password: regularPassword,
+      email: process.env.SEED_USER_EMAIL,
+      password: process.env.SEED_USER_PASSWORD,
       role: 'user',
       employee: createdEmployees[0]._id,
     });
-    console.log(`✓ Created regular user for ${regularUser.email}`);
+    console.log(`✓ User created: ${regularUser.email}`);
 
-    // Create tasks
+    console.log('📋 Creating tasks...');
     const tasks = [
       {
         title: 'Implement user authentication',
-        description: 'Setup JWT-based authentication for the application',
+        description: 'Setup JWT-based authentication',
         status: 'in-progress',
         priority: 'high',
         assignedTo: createdEmployees[0]._id,
         dueDate: new Date('2025-12-15'),
       },
       {
-        title: 'Design new dashboard',
-        description: 'Create mockups and design for the main dashboard',
+        title: 'Design dashboard UI',
+        description: 'Create dashboard wireframes',
         status: 'pending',
         priority: 'high',
         assignedTo: createdEmployees[3]._id,
         dueDate: new Date('2025-12-10'),
       },
       {
-        title: 'Setup CI/CD pipeline',
-        description: 'Configure GitHub Actions for automated testing and deployment',
+        title: 'Setup CI/CD',
+        description: 'Configure automated deployment',
         status: 'pending',
         priority: 'medium',
         assignedTo: createdEmployees[4]._id,
         dueDate: new Date('2025-12-20'),
       },
-      {
-        title: 'Optimize database queries',
-        description: 'Review and optimize slow database queries',
-        status: 'completed',
-        priority: 'medium',
-        assignedTo: createdEmployees[0]._id,
-        dueDate: new Date('2025-11-20'),
-        completedAt: new Date('2025-11-18'),
-      },
-      {
-        title: 'Fix responsive design issues',
-        description: 'Ensure all pages are responsive on mobile devices',
-        status: 'in-progress',
-        priority: 'high',
-        assignedTo: createdEmployees[2]._id,
-        dueDate: new Date('2025-12-08'),
-      },
-      {
-        title: 'Write API documentation',
-        description: 'Document all REST API endpoints',
-        status: 'pending',
-        priority: 'medium',
-        assignedTo: createdEmployees[0]._id,
-        dueDate: new Date('2025-12-25'),
-      },
-      {
-        title: 'Review pull requests',
-        description: 'Review and approve pending pull requests',
-        status: 'in-progress',
-        priority: 'medium',
-        assignedTo: createdEmployees[0]._id,
-        dueDate: new Date('2025-12-05'),
-      },
-      {
-        title: 'Update user profile page',
-        description: 'Add new profile fields and update styling',
-        status: 'pending',
-        priority: 'low',
-        assignedTo: createdEmployees[2]._id,
-        dueDate: new Date('2025-12-30'),
-      },
-      {
-        title: 'Setup monitoring and alerting',
-        description: 'Configure Sentry and DataDog for production monitoring',
-        status: 'pending',
-        priority: 'medium',
-        assignedTo: createdEmployees[4]._id,
-        dueDate: new Date('2025-12-18'),
-      },
-      {
-        title: 'Create user onboarding flow',
-        description: 'Design and implement welcome/onboarding screens',
-        status: 'in-progress',
-        priority: 'high',
-        assignedTo: createdEmployees[3]._id,
-        dueDate: new Date('2025-12-12'),
-      },
     ];
 
-    const createdTasks = await Task.insertMany(tasks);
-    console.log(`✓ Created ${createdTasks.length} tasks`);
+    await Task.insertMany(tasks);
+    console.log(`✓ ${tasks.length} tasks created`);
 
-    console.log('\n✓ Database seeded successfully!');
+    console.log('\n🎉 Database seeded successfully!');
     process.exit(0);
   } catch (error) {
-    console.error('Error seeding database:', error.message);
+    console.error('❌ Seeding failed:', error.message);
     process.exit(1);
   }
 };
