@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import { dashboardAPI } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 import './Dashboard.css'
 
 export default function Dashboard() {
+  const { employeeProfile, isAdmin } = useAuth()
+
   const [dashboardData, setDashboardData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -35,6 +38,18 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-container">
+
+      {/* ===== EMPLOYEE PROFILE (only for employees) ===== */}
+      {!isAdmin && employeeProfile && (
+        <div className="profile-card">
+          <h3>My Profile</h3>
+          <p><b>Name:</b> {employeeProfile.name}</p>
+          <p><b>Email:</b> {employeeProfile.email}</p>
+          <p><b>Department:</b> {employeeProfile.department}</p>
+          <p><b>Position:</b> {employeeProfile.position}</p>
+        </div>
+      )}
+
       <h2>Dashboard</h2>
 
       <div className="summary-grid">
@@ -78,36 +93,70 @@ export default function Dashboard() {
             <div className="status-item">
               <span className="status-label">Pending</span>
               <div className="status-bar">
-                <div className="status-fill pending" style={{
-                  width: `${summary.totalTasks > 0 ? (summary.pendingTasks / summary.totalTasks) * 100 : 0}%`
-                }}></div>
+                <div
+                  className="status-fill pending"
+                  style={{
+                    width: `${
+                      summary.totalTasks > 0
+                        ? (summary.pendingTasks / summary.totalTasks) * 100
+                        : 0
+                    }%`,
+                  }}
+                ></div>
               </div>
               <span className="status-count">{summary.pendingTasks}</span>
             </div>
+
             <div className="status-item">
               <span className="status-label">In Progress</span>
               <div className="status-bar">
-                <div className="status-fill in-progress" style={{
-                  width: `${summary.totalTasks > 0 ? (summary.inProgressTasks / summary.totalTasks) * 100 : 0}%`
-                }}></div>
+                <div
+                  className="status-fill in-progress"
+                  style={{
+                    width: `${
+                      summary.totalTasks > 0
+                        ? (summary.inProgressTasks / summary.totalTasks) * 100
+                        : 0
+                    }%`,
+                  }}
+                ></div>
               </div>
               <span className="status-count">{summary.inProgressTasks}</span>
             </div>
+
             <div className="status-item">
               <span className="status-label">Awaiting Approval</span>
               <div className="status-bar">
-                <div className="status-fill awaiting" style={{
-                  width: `${summary.totalTasks > 0 ? (summary.awaitingApprovalTasks / summary.totalTasks) * 100 : 0}%`
-                }}></div>
+                <div
+                  className="status-fill awaiting"
+                  style={{
+                    width: `${
+                      summary.totalTasks > 0
+                        ? (summary.awaitingApprovalTasks / summary.totalTasks) *
+                          100
+                        : 0
+                    }%`,
+                  }}
+                ></div>
               </div>
-              <span className="status-count">{summary.awaitingApprovalTasks}</span>
+              <span className="status-count">
+                {summary.awaitingApprovalTasks}
+              </span>
             </div>
+
             <div className="status-item">
               <span className="status-label">Completed</span>
               <div className="status-bar">
-                <div className="status-fill completed" style={{
-                  width: `${summary.totalTasks > 0 ? (summary.completedTasks / summary.totalTasks) * 100 : 0}%`
-                }}></div>
+                <div
+                  className="status-fill completed"
+                  style={{
+                    width: `${
+                      summary.totalTasks > 0
+                        ? (summary.completedTasks / summary.totalTasks) * 100
+                        : 0
+                    }%`,
+                  }}
+                ></div>
               </div>
               <span className="status-count">{summary.completedTasks}</span>
             </div>
@@ -119,7 +168,9 @@ export default function Dashboard() {
           <div className="priority-breakdown">
             {Object.entries(tasksByPriority).map(([priority, count]) => (
               <div key={priority} className="priority-item">
-                <span className={`priority-badge ${priority}`}>{priority.toUpperCase()}</span>
+                <span className={`priority-badge ${priority}`}>
+                  {priority.toUpperCase()}
+                </span>
                 <span className="count">{count} tasks</span>
               </div>
             ))}
@@ -136,6 +187,7 @@ export default function Dashboard() {
             <div className="col-completed">Completed</div>
             <div className="col-rate">Completion Rate</div>
           </div>
+
           <div className="table-body">
             {tasksByEmployee.length === 0 ? (
               <div className="empty-row">No employee data available</div>
