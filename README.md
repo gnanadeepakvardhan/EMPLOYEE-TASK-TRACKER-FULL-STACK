@@ -61,12 +61,18 @@ drive link: https://drive.google.com/drive/folders/1cB_Ty7mY3YlxbYx1JVhSkEr4GGUi
    MONGODB_URI=mongodb://localhost:27017/employee-task-tracker
    NODE_ENV=development
    FRONTEND_URL=http://localhost:5173
-JWT_SECRET=dev_jwt_secret
+# JWT Configuration
+JWT_SECRET=<your_jwt_secret_here>
 JWT_EXPIRES_IN=1d
-SEED_ADMIN_EMAIL=admin@example.com
-SEED_ADMIN_PASSWORD=Admin@123
-SEED_USER_EMAIL=user@example.com
-SEED_USER_PASSWORD=User@123
+
+# Seed Admin Account (for initial setup)
+SEED_ADMIN_EMAIL=<admin_email_here>
+SEED_ADMIN_PASSWORD=<admin_password_here>
+
+# Seed User Account (for testing)
+SEED_USER_EMAIL=<user_email_here>
+SEED_USER_PASSWORD=<user_password_here>
+
    ```
 
 4. **Seed the database** (optional - creates sample data)
